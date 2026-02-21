@@ -2,4 +2,7 @@
 ->  check all possible types of agenda items, apart from regular
     items there seems to be special items like "Zusatzpunkt" (e.g. Session 21/57 Tagesordnungspunkt 24),
     or "Überweisung". They also seem to come with their respective titles, documents etc.
+    Aktuelle Stunde is another case that has to be considered, Beratung eingebrachter
+    Gesetzesentwürfe (seems to have no title, at least in session 21/57)
 ->  idea fpr future extension: also get doc files that agenda items refer to, not only their urls
+
