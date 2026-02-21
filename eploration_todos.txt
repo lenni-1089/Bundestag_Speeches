@@ -6,3 +6,10 @@
     Gesetzesentwürfe (seems to have no title, at least in session 21/57)
 ->  idea fpr future extension: also get doc files that agenda items refer to, not only their urls
 
+
+XML-Schema:
+
+-> build robust schema discovery tool, to map out and track schema to identify structures
+   across branches and sessions that is more standardized and scalable than eyballing
+   sample elements
+
