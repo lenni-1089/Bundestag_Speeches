@@ -13,3 +13,9 @@ XML-Schema:
    across branches and sessions that is more standardized and scalable than eyballing
    sample elements
 
+TXT cleaning:
+-> identify and remove special characters like "\xa", "\xa0–","\ta)\t"
+
+GENERAL:
+speeches catch president's introduction of next speaker, check!
+
