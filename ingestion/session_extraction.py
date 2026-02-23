@@ -1,7 +1,11 @@
 import requests
 import pandas as pd
 import xml.etree.ElementTree as ET
+import os
 from pprint import pprint
+
+
+
 
 def get_session_info(root)->dict:
 
@@ -10,7 +14,7 @@ def get_session_info(root)->dict:
 
     return {
             "issn_id" : plenary_session_metadata["issn"],
-            "plenary_period" : plenary_session_metadata["wahlperiode"],
+            "legaslative_period" : plenary_session_metadata["wahlperiode"],
             "session_nr" : plenary_session_metadata["sitzung-nr"],
             "session_date" : plenary_session_metadata["sitzung-datum"],
             "session_start_time" : plenary_session_metadata["sitzung-start-uhrzeit"],
@@ -101,15 +105,10 @@ def get_speech_content(speech_raw)-> dict:
     return {"speech_id": speech_id, "speech": speech_string, "comments": comments}
 
 
-def main():
+def session_extraction(xml_filepath:str):
 
-    #file_path ="https://www.bundestag.de/resource/blob/1140642/21057.xml"
-    file_path = "https://www.bundestag.de/resource/blob/1137306/21054.xml"
-
-    response = requests.get(file_path)
-    response.raise_for_status()
-
-    root = ET.fromstring(response.content)
+    tree = ET.parse(xml_filepath)
+    root = tree.getroot()
     session_info = get_session_info(root)
     rows = []
 
@@ -127,7 +126,7 @@ def main():
     columns = [
         # Session level
         "issn_id",
-        "plenary_period",
+        "legaslative_period",
         "session_nr",
         "session_date",
         "session_start_time",
@@ -150,12 +149,24 @@ def main():
         "comments",
     ]
 
+
     session_df = pd.DataFrame(data=rows, columns=columns)
-    session_df.to_csv("./session.csv")
+
+    output_path = f"./csv_files/{session_info["legaslative_period"]}_{session_info["session_nr"]}.csv"
+    print(output_path)
+
+    if not os.path.exists(output_path):
+        session_df.to_csv(output_path)
+    else:
+        print(f"File already exists: {output_path}")
+
+
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    file_path = sys.argv[1]
+    session_extraction(filepath= file_path)
 
 
 

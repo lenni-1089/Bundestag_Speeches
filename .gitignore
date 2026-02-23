@@ -2,3 +2,5 @@
 
 
 __pycache__
+ingestion/xml_files/*.xml
+ingestion/csv_files/*.csv
