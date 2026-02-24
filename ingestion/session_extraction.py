@@ -153,12 +153,16 @@ def session_extraction(xml_filepath:str):
     session_df = pd.DataFrame(data=rows, columns=columns)
 
     output_path = f"./csv_files/{session_info["legaslative_period"]}_{session_info["session_nr"]}.csv"
-    print(output_path)
+
 
     if not os.path.exists(output_path):
         session_df.to_csv(output_path)
     else:
-        print(f"File already exists: {output_path}")
+        raise ValueError(f"File already exsists: {output_path}")
+
+    return output_path
+
+
 
 
 
