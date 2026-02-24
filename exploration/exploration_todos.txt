@@ -19,5 +19,7 @@ TXT cleaning:
 GENERAL:
 speeches catch president's introduction of next speaker, check!
 
+
+
 Build out logging an reports, like error logging, metadate tracking (nr. of speeches extracted etc.)
 

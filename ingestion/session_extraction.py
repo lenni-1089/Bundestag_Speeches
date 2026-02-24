@@ -92,9 +92,15 @@ def get_speech_content(speech_raw)-> dict:
     speech_id = speech_raw.get("id")
 
     position = 1
-    for element in speech_raw:
-
-        if element.tag == "p" and element.text:
+    for idx, element in enumerate(speech_raw):
+        # each speech is ended by remarks by the president (either warning
+        # speaking time is up and/or announcing the next speaker)
+        # this shows itself by a name tag followed by a paragrpah of class "J_1"
+        if element.tag == "name":
+            continue
+        if  element.get("klasse") == "J_1" and idx > 0 and speech_raw[idx -1].tag == "name":
+            continue
+        elif element.tag == "p" and element.text:
             speech_chunks.append(element.text)
             position += (len(element.text) + 1)
         elif element.tag == "kommentar" and element.text:

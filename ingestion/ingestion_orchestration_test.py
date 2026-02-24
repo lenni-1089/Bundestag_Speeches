@@ -58,7 +58,8 @@ def run_ingestion_pipeline(xml_request_url):
 urls = ["https://www.bundestag.de/resource/blob/1129442/21048.xml",
         "https://www.bundestag.de/resource/blob/1137042/21053.xml",
         "https://www.bundestag.de/resource/blob/1134422/21051.xml",
-        "https://www.bundestag.de/resource/blob/1134418/21050.xml"]
+        "https://www.bundestag.de/resource/blob/1134418/21050.xml",
+        "https://www.bundestag.de/resource/blob/1140642/21057.xml"]
 
 for url in urls:
     run_ingestion_pipeline(url)
