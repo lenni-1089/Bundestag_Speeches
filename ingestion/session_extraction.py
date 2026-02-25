@@ -162,14 +162,11 @@ def session_extraction(xml_filepath:str):
 
 
     if not os.path.exists(output_path):
-        session_df.to_csv(output_path)
+        session_df.to_csv(output_path, index=False)
     else:
         raise ValueError(f"File already exsists: {output_path}")
 
     return output_path
-
-
-
 
 
 
