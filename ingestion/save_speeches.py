@@ -6,7 +6,7 @@ def save_speeches_to_parquet(validated_dataframe: pd.DataFrame, output_path:str)
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     if os.path.exists(output_path):
-        raise FileExistsError(f"File already exists: {e}")
+        raise FileExistsError(f"File already exists: {output_path}")
 
     validated_dataframe.to_parquet(output_path,
                                     engine='pyarrow',
