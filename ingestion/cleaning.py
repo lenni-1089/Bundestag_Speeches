@@ -1,5 +1,4 @@
 import pandas as pd
-import pandera as pa
 from pandas import DataFrame
 import re
 
@@ -29,11 +28,9 @@ def clean_comments(comments_list: list)-> list:
     return comments_list
 
 
-
-
 def cleaning_raw_speeches(dataframe: pd.DataFrame) -> pd.DataFrame:
 
-    raw_df = dataframe
+    df = dataframe.copy()
     # apply text cleaning with map(), to all string columns
     string_columns = ['agenda_name',
                       'agenda_title',
@@ -43,18 +40,14 @@ def cleaning_raw_speeches(dataframe: pd.DataFrame) -> pd.DataFrame:
                       'party_affiliation',
                       'speech']
 
-    df_text_cleaned = raw_df.copy()
-    df_text_cleaned[string_columns] = df_text_cleaned[string_columns].map(clean_text, na_action="ignore")
-    df_text_comments_cleaned = df_text_cleaned.copy()
-    df_text_comments_cleaned["comments"] = df_text_cleaned["comments"].map(clean_comments, na_action="ignore")
+    
+    df[string_columns] = df[string_columns].map(clean_text, na_action="ignore")
+    df["comments"] = df["comments"].map(clean_comments, na_action="ignore")
 
     # manually convert dtypes, mainly ints and datetime
-    df_text_clean_dtypes_adjusted = df_text_comments_cleaned.copy()
+    df["session_date"] = pd.to_datetime(df["session_date"], format= "%d.%m.%Y")
+    df["speaker_id"] = df["speaker_id"].astype(str)
+    df["legaslative_period"] = df["legaslative_period"].astype(int)
+    df["session_nr"] = df["session_nr"].astype(int)
 
-    df_text_clean_dtypes_adjusted["session_date"] = pd.to_datetime(df_text_clean_dtypes_adjusted["session_date"], format= "%d.%m.%Y")
-    df_text_clean_dtypes_adjusted["speaker_id"] = df_text_clean_dtypes_adjusted["speaker_id"].astype(str)
-    df_text_clean_dtypes_adjusted["legaslative_period"] = df_text_clean_dtypes_adjusted["legaslative_period"].astype(int)
-    df_text_clean_dtypes_adjusted["session_nr"] = df_text_clean_dtypes_adjusted["session_nr"].astype(int)
-
-
-    return df_text_clean_dtypes_adjusted
+    return df
