@@ -24,10 +24,10 @@
 # In terms of defining an object based pandera schema, we define an DataframeSchema object that takes a dictionary as input.
 # This dict lets us define which columns to expect, as keys, and which constraints to check values of that columns against,
 # as values.
-import pandera as pa
+import pandera.pandas as pa
 from typing import Dict, List
 
-schema = pa.DataFrameSchema(
+bronze_schema = pa.DataFrameSchema(
     {
         'issn_id': pa.Column(str, nullable=False) , # document identifier string,
                                                     # not null (not unique as all speeches of same session)
@@ -46,13 +46,11 @@ schema = pa.DataFrameSchema(
         'name': pa.Column(str, nullable=False, checks=pa.Check.str_length(min_value=2)),
         'lastname': pa.Column(str, nullable=False, checks=pa.Check.str_length(min_value=2)),
         'role':pa.Column(str, nullable=True),
-        'party_affiliation':pa.Column(str, nullable=True, checks=pa.Check.isin(['AfD',  # Add past parties like Fdp
-                                                                                'SPD',
-                                                                                'BÜNDNIS 90/DIE GRÜNEN',
-                                                                                'CDU/CSU',
-                                                                                'Die Linke'])),
+        'party_affiliation':pa.Column(str, nullable=True, checks=pa.Check.str_length(min_value=2)),
         'speech_id':pa.Column(str, nullable=False),
         'speech': pa.Column(str, nullable=False, checks=pa.Check.str_length(min_value=10)),
         'comments': pa.Column(List[Dict], nullable=True), ### OBJECT CHECK list of dicts
-
-})
+        },
+    strict=True,
+    coerce=True,
+)
