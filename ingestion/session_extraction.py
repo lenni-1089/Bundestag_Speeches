@@ -1,8 +1,6 @@
-import requests
 import pandas as pd
 import xml.etree.ElementTree as ET
-import os
-from pprint import pprint
+
 
 
 
@@ -156,11 +154,7 @@ def session_extraction(xml_filepath:str)-> pd.DataFrame:
         "comments",
     ]
 
-
     session_df = pd.DataFrame(data=rows, columns=columns)
-
-    output_path = f"./csv_files/{session_info["legaslative_period"]}_{session_info["session_nr"]}.csv"
-
 
     return session_df
 
