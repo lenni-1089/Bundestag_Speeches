@@ -111,7 +111,7 @@ def get_speech_content(speech_raw)-> dict:
     return {"speech_id": speech_id, "speech": speech_string, "comments": comments}
 
 
-def session_extraction(xml_filepath:str):
+def session_extraction(xml_filepath:str)-> pd.DataFrame:
 
     tree = ET.parse(xml_filepath)
     root = tree.getroot()
@@ -129,6 +129,7 @@ def session_extraction(xml_filepath:str):
                    **get_speaker_info(speech),
                    **get_speech_content(speech)}
             rows.append(row)
+
     columns = [
         # Session level
         "issn_id",
@@ -161,12 +162,7 @@ def session_extraction(xml_filepath:str):
     output_path = f"./csv_files/{session_info["legaslative_period"]}_{session_info["session_nr"]}.csv"
 
 
-    if not os.path.exists(output_path):
-        session_df.to_csv(output_path, index=False)
-    else:
-        raise ValueError(f"File already exsists: {output_path}")
-
-    return output_path
+    return session_df
 
 
 
