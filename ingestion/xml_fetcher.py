@@ -46,6 +46,7 @@ def fetch_xml(URL: str) ->str:
 
 
 
+
 if __name__ == "__main__":
     import sys
     url_path = sys.argv[1]
