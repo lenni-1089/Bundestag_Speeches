@@ -5,3 +5,4 @@ __pycache__
 ingestion/xml_files/*.xml
 ingestion/csv_files/*.csv
 ingestion/parquet_files/*.parquet
+ingestion/parquet_files
