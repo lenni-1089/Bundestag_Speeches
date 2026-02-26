@@ -1,7 +1,6 @@
 import requests
 import xml.etree.ElementTree as ET
 import os
-from session_extraction import session_extraction
 
 def parse_session_info_from_url(url):
     response = requests.get(url)
@@ -30,9 +29,8 @@ def fetch_xml(URL: str) ->str:
     root = ET.fromstring(response.content)
     verify_xml(root)
     session_info = root.attrib
-    legaslative_period, session_nr = parse_session_info_from_url(URL)
-
-
+    legaslative_period = session_info["wahlperiode"]
+    session_nr = session_info["sitzung-nr"]
 
     output_path = f"./xml_files/{legaslative_period}_{session_nr}.xml"
 
