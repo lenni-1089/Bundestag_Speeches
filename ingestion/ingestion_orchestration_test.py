@@ -2,23 +2,26 @@ import os.path
 
 from xml_fetcher import fetch_xml,parse_session_info_from_url
 from session_extraction import session_extraction
-
+from cleaning import cleaning_raw_speeches
+from schemas_bronze import bronze_schema
+import pandera.pandas as pa
+from save_speeches import save_speeches_to_parquet
 
 
 def run_ingestion_pipeline(xml_request_url):
 
     # checking what tasks are required (whether we already have processed that session and if not whether
     # we have already fetched the xml file)
-    legalative_period, session_nr = parse_session_info_from_url(xml_request_url)
+    legaslative_period, session_nr = parse_session_info_from_url(xml_request_url)
 
-    csv_path = f"./csv_files/{legalative_period}_{session_nr}.csv"
-    xml_path = f"./xml_files/{legalative_period}_{session_nr}.xml"
+    parquet_path = f"./parquet_files/{legaslative_period}_{session_nr}.parquet"
+    xml_path = f"./xml_files/{legaslative_period}_{session_nr}.xml"
 
-    # if we already have the a csv file of processed speeches and
+    # if we already have the a parquet file of processed speeches and
     # fetched the xml the pipeline does not need to run
-    if os.path.exists(csv_path) and os.path.exists(xml_path):
-        print(f"Session {session_nr}  of legaslative period {legalative_period} already fully processed.")
-        print(f"Processed file can be found at: {csv_path}")
+    if os.path.exists(parquet_path) and os.path.exists(xml_path):
+        print(f"Session {session_nr}  of legaslative period {legaslative_period} already fully processed.")
+        print(f"Processed file can be found at: {parquet_path}")
         return
 
     #else we fetch the xml file
@@ -37,20 +40,52 @@ def run_ingestion_pipeline(xml_request_url):
         print(f"XML file has already been downloaded, proceeding with session extraction.")
         xml_output_path = xml_path
 
-    # if processed speeches csv does not yet exist and xml file
+    # if processed speeches parquet does not yet exist and xml file
     # was fetched, we process that xml file to extract speeches from
     try:
         print("Starting to extract speeches.")
-        csv_output_path = session_extraction(xml_output_path)
+        raw_speeches_df = session_extraction(xml_output_path)
     except Exception as e:
         print(f"Extraction Error: {e}")
         return
     else:
         print(f"Session extraction successfull!")
-        print(f"Extracted speeched saved at: {csv_output_path}")
+
+    # clean speeches (text cleaning and type conversion)
+    try:
+        clean_df = cleaning_raw_speeches(raw_speeches_df)
+    except Exception as e:
+        print(f"Cleaning Error: {e}")
+        return
+    else:
+        print("Speeches cleaning done.")
+
+    # validating cleaned data before saving
+    try:
+        validated_df = bronze_schema.validate(clean_df)
+    except pa.errors.SchemaError as exc:
+        print(exc)
+        return
+    else:
+        print("Data validate, proceeding to save as parquet files.")
+    # saving files as parquet
+    try:
+        output_path = save_speeches_to_parquet(validated_df, parquet_path)
+    except FileExistsError as e:
+        print(f"File already exists, skipping {e}")
+        return
+    except PermissionError as e:
+        print(f"Permission denied when writing to file: {e}")
+        return
+    except Exception as e:
+        print(f"Unexpected writing error: {e}")
+        return
+    else:
+        print(f"Session {session_nr} of legaslative period {legaslative_period} succesfully ingested!")
 
 
-    print(f"Ingestion session {legalative_period}_{session_nr} complete")
+
+    print(f"Ingestion session {legaslative_period}_{session_nr} complete")
 
 
 # test run
