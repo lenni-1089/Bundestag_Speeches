@@ -6,3 +6,5 @@ ingestion/xml_files/*.xml
 ingestion/csv_files/*.csv
 ingestion/parquet_files/*.parquet
 ingestion/parquet_files
+ingestion/cleaning_dev.ipynb
+ingestion/cleaning_test.py
