@@ -22,9 +22,9 @@ def verify_xml(root):
 
 
 
-def fetch_xml(URL: str) ->str:
+def fetch_xml(input_url: str) ->str:
 
-    response = requests.get(URL)
+    response = requests.get(input_url)
     response.raise_for_status()
     root = ET.fromstring(response.content)
     verify_xml(root)
@@ -32,14 +32,19 @@ def fetch_xml(URL: str) ->str:
     legaslative_period = session_info["wahlperiode"]
     session_nr = session_info["sitzung-nr"]
 
-    output_path = f"./xml_files/{legaslative_period}_{session_nr}.xml"
+    DIR_PATH = f'/Volumes/bundestag_dev/bronze/raw_xml/{legaslative_period}'
+    FILE_PATH = f'{DIR_PATH}/{legaslative_period}_{session_nr}.xml'
 
-    if not os.path.exists(output_path):
-        with open(output_path, 'wb') as file:
+    if not os.path.isdir(DIR_PATH):
+        os.makedirs(DIR_PATH)
+
+    
+    if not os.path.exists(FILE_PATH):
+        with open(FILE_PATH, 'wb') as file:
             file.write(response.content)
-        return output_path
+        return FILE_PATH
     else:
-        raise ValueError(f"File already exists: {output_path}")
+        raise ValueError(f"File already exists: {FILE_PATH}")
 
 
 
