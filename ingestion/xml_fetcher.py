@@ -22,7 +22,7 @@ def verify_xml(root):
 
 
 
-def fetch_xml(input_url: str) ->str:
+def fetch_xml(input_url: str, output_directory:str) ->str:
 
     response = requests.get(input_url)
     response.raise_for_status()
@@ -32,7 +32,7 @@ def fetch_xml(input_url: str) ->str:
     legaslative_period = session_info["wahlperiode"]
     session_nr = session_info["sitzung-nr"]
 
-    DIR_PATH = f'/Volumes/bundestag_dev/bronze/raw_xml/{legaslative_period}'
+    DIR_PATH = f'{output_directory}/{legaslative_period}'
     FILE_PATH = f'{DIR_PATH}/{legaslative_period}_{session_nr}.xml'
 
     if not os.path.isdir(DIR_PATH):
@@ -47,10 +47,12 @@ def fetch_xml(input_url: str) ->str:
         raise ValueError(f"File already exists: {FILE_PATH}")
 
 
-
-
-
 if __name__ == "__main__":
     import sys
-    url_path = sys.argv[1]
-    fetch_xml(URL= url_path)
+    if len(sys.argv) == 3:
+        xml_path = sys.argv[1]
+        output_path = sys.argv[2]
+        fetch_xml(input_url= xml_path, output_directory=output_path)
+    else:
+        print("Usage: python fetch_xml.py <input_url> <output_directory>")
+        sys.exit()
