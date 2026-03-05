@@ -1,0 +1,1 @@
+CREATE VOLUME IF NOT EXISTS bundestag_dev.bronze.raw_xml;
