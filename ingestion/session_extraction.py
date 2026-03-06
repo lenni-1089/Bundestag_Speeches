@@ -1,10 +1,6 @@
 import pandas as pd
 import xml.etree.ElementTree as ET
 
-
-
-
-
 def get_session_info(root)->dict:
 
     if root.tag =="dbtplenarprotokoll" and root.attrib:
@@ -111,23 +107,37 @@ def get_speech_content(speech_raw)-> dict:
 
 def session_extraction(xml_filepath:str)-> pd.DataFrame:
 
+    # fetching xml file and parsing it into an element tree
     tree = ET.parse(xml_filepath)
     root = tree.getroot()
-    session_info = get_session_info(root)
-    rows = []
 
+    # getting session level information
+    session_info = get_session_info(root)
+
+    # create list to temporarily store extracted speeches
+    speech_rows = []
+
+    # getting agenda items that contain speeches from session
     agenda_root= root.find("sitzungsverlauf")
     agenda_items = [item for item in agenda_root if item.tag != "sitzungsbeginn" and item.tag != "sitzungsende"]
 
+    # for each agenda item extracting agenda level information
+    # then for each speech in a agenda item extracting speech information
     for item in agenda_items:
+
+        # extracting agenda information of one agenda item
         agenda_info = get_agenda_info(item)
+        # identifying speeches and for each speech extracting speaker and speech information
+        # and combining it with context (session info it was part of, agenda info it was part of)
         for speech in item.findall("rede"):
             row = {**session_info,
                    **agenda_info,
                    **get_speaker_info(speech),
                    **get_speech_content(speech)}
-            rows.append(row)
-
+            # add speeches to temporary speech list
+            speech_rows.append(row)
+    
+    # defining columns for dataframe to save speeches
     columns = [
         # Session level
         "issn_id",
@@ -154,7 +164,9 @@ def session_extraction(xml_filepath:str)-> pd.DataFrame:
         "comments",
     ]
 
-    session_df = pd.DataFrame(data=rows, columns=columns)
+    # creating dataframe with all identified speeches based on columns just defined
+    # and speech list
+    session_df = pd.DataFrame(data=speech_rows, columns=columns)
 
     return session_df
 
