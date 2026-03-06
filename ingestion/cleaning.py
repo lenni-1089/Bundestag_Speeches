@@ -52,7 +52,7 @@ def cleaning_raw_speeches(dataframe: pd.DataFrame) -> pd.DataFrame:
     # ensuring speaker ids are strings not ints
     df["speaker_id"] = df["speaker_id"].astype(str)
     # casting legislative period and session nr to int
-    df["legaslative_period"] = df["legaslative_period"].astype(int)
-    df["session_nr"] = df["session_nr"].astype(int)
+    df["legaslative_period"] = df["legaslative_period"].astype("int32")
+    df["session_nr"] = df["session_nr"].astype("int32")
 
     return df
