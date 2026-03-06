@@ -31,7 +31,7 @@ def clean_comments(comments_list: list)-> list:
 def cleaning_raw_speeches(dataframe: pd.DataFrame) -> pd.DataFrame:
 
     df = dataframe.copy()
-    # apply text cleaning with map(), to all string columns
+    # defining all string columns for text cleaning
     string_columns = ['agenda_name',
                       'agenda_title',
                       'agenda_subtitle',
@@ -40,13 +40,18 @@ def cleaning_raw_speeches(dataframe: pd.DataFrame) -> pd.DataFrame:
                       'party_affiliation',
                       'speech']
 
-    
+    # apply text cleaning to all string columns
     df[string_columns] = df[string_columns].map(clean_text, na_action="ignore")
+    # apply text cleaning to comments, as they are nested in dictionaries
+    # requires dedicated function for access
     df["comments"] = df["comments"].map(clean_comments, na_action="ignore")
 
-    # manually convert dtypes, mainly ints and datetime
+    # type casting
+    # cast session dates from string to dates
     df["session_date"] = pd.to_datetime(df["session_date"], format= "%d.%m.%Y")
+    # ensuring speaker ids are strings not ints
     df["speaker_id"] = df["speaker_id"].astype(str)
+    # casting legislative period and session nr to int
     df["legaslative_period"] = df["legaslative_period"].astype(int)
     df["session_nr"] = df["session_nr"].astype(int)
 
