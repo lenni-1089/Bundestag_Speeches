@@ -18,3 +18,5 @@ ALTER TABLE bundestag_dev.bronze.raw_sessions ADD CONSTRAINT chk_legislative_per
 
 ALTER TABLE bundestag_dev.bronze.raw_sessions ADD CONSTRAINT chk_session_nr CHECK (session_nr > 0);
 ALTER TABLE bundestag_dev.bronze.raw_sessions ADD CONSTRAINT chk_status CHECK (status IN ('ingested', 'processed'));
+
+
