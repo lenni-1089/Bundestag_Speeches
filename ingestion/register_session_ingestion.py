@@ -1,5 +1,12 @@
 
 from pyspark.sql import SparkSession
+
+class DuplicateIngestionError(Exception):
+
+    def __init__(self,message):
+        super().__init__(message)
+    
+
 def register_xml_fetch(spark:SparkSession,filepath:str, source_path:str):
     filename = filepath.split('/')[-1]
     legislative_period, session_nr = filename.replace(".xml","").split("_")
