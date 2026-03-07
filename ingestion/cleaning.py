@@ -15,9 +15,6 @@ def clean_comments(comments_list: list)-> list:
     # each comment is a list of dictionaries
     # containing the index position of a comments as the key
     # the comment itself as the value
-    if not isinstance(comments_list, list):
-        return comments_list
-
     for comment_dict in comments_list:
 
         if not isinstance(comment_dict,dict):
