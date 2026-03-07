@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS bundestag_dev.silver_staging.speeches_staging (
           session_date DATE NOT NULL,
           session_start_time STRING,
           session_end_time STRING,
-          next_session_date DATE,
+          next_session_date STRING,
           -- agenda level
           agenda_name STRING NOT NULL,
           agenda_title STRING,
@@ -67,7 +67,7 @@ ALTER TABLE bundestag_dev.silver_staging.speeches_staging
 ADD CONSTRAINT chk_lastname_length CHECK(length(lastname) >= 2);
 -- party affilation min len 2
 ALTER TABLE bundestag_dev.silver_staging.speeches_staging
-ADD CONSTRAINT chk_party_affiliation_length CHECK(length(party_affiliation) >= 2);
+ADD CONSTRAINT chk_party_affiliation_length CHECK(party_affiliation IS NULL OR length(party_affiliation) >= 2);
 -- speech min len 10
 ALTER TABLE bundestag_dev.silver_staging.speeches_staging
 ADD CONSTRAINT chk_speech_length CHECK(length(speech) >= 10);
