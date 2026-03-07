@@ -49,7 +49,7 @@ bronze_schema = pa.DataFrameSchema(
         'party_affiliation':pa.Column(str, nullable=True, checks=pa.Check.str_length(min_value=2)),
         'speech_id':pa.Column(str, nullable=False),
         'speech': pa.Column(str, nullable=False, checks=pa.Check.str_length(min_value=10)),
-        'comments': pa.Column(List[Dict], nullable=True), ### OBJECT CHECK list of dicts
+        'comments': pa.Column(List[Dict], nullable=False), ### OBJECT CHECK list of dicts
         },
     strict=True,
     coerce=True,
@@ -75,7 +75,7 @@ silver_staging_spark_schema = StructType([
             StructField("agenda_name", StringType(), False),
             StructField("agenda_title", StringType(), True),
             StructField("agenda_subtitle", StringType(), True),
-            StructField("agenda_docs", ArrayType(StringType()), True),
+            StructField("agenda_docs", ArrayType(StringType()), False),
             # speaker level
             StructField("speaker_id", StringType(), False),
             StructField("name", StringType(), False),
@@ -90,7 +90,7 @@ silver_staging_spark_schema = StructType([
                     StructField("index_position", IntegerType(), True),
                     StructField("comment_text", StringType(), True),
                 ])
-            ), True),
+            ), False),
             StructField("source_path", StringType(), False)
 ])
 
