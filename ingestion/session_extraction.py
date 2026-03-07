@@ -41,7 +41,7 @@ def get_agenda_info(agenda_item) -> dict:
     if agenda_doc_elements:
         agenda_doc_urls = [doc_element.get("href") for doc_element in agenda_doc_elements]
     else:
-        agenda_doc_urls = None
+        agenda_doc_urls = []
 
 
 
