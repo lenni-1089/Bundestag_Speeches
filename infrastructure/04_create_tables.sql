@@ -5,7 +5,8 @@ CREATE TABLE bundestag_dev.bronze.raw_sessions (
   file_url STRING NOT NULL,
   status STRING,
   inserted_at TIMESTAMP NOT NULL,
-  source_path STRING NOT NULL
+  source_path STRING NOT NULL,
+  processed_at TIMESTAMP,
 ) USING DELTA;
 
 ALTER TABLE bundestag_dev.bronze.raw_sessions SET
@@ -13,6 +14,9 @@ TBLPROPERTIES('delta.feature.allowColumnDefaults' = 'supported');
 
 ALTER TABLE bundestag_dev.bronze.raw_sessions 
 ALTER COLUMN status SET DEFAULT 'ingested';
+
+ALTER TABLE bundestag_dev.bronze.raw_sessions
+ALTER COLUMN processed_at SET DEFAULT NULL;
 
 ALTER TABLE bundestag_dev.bronze.raw_sessions ADD CONSTRAINT chk_legislative_period CHECK (legislative_period > 0);
 
