@@ -31,10 +31,10 @@ bronze_schema = pa.DataFrameSchema(
     {
         'issn_id': pa.Column(str, nullable=False) , # document identifier string,
                                                     # not null (not unique as all speeches of same session)
-        'legaslative_period': pa.Column(int,nullable= False, checks=pa.Check.ge(20)), # not null serves as an ordinal attribute,
+        'legaslative_period': pa.Column("int32",nullable= False, checks=pa.Check.ge(20)), # not null serves as an ordinal attribute,
                                                                                        # not an identifier only thats why int, we only fetch data from legalstive period 20 onwards
-        'session_nr': pa.Column(int,nullable=False, checks=pa.Check.gt(0)),  # same as legaslative period, but greater than 0
-        'session_date': pa.Column("datetime64[us]", nullable=False),
+        'session_nr': pa.Column("int32",nullable=False, checks=pa.Check.gt(0)),  # same as legaslative period, but greater than 0
+        'session_date': pa.Column(object, nullable=False),
         'session_start_time': pa.Column(str, nullable=True),
         'session_end_time': pa.Column(str, nullable=True),
         'next_session_date': pa.Column(str, nullable=True),
@@ -54,3 +54,45 @@ bronze_schema = pa.DataFrameSchema(
     strict=True,
     coerce=True,
 )
+
+
+
+from pyspark.sql.types import (
+    StructType, StructField, StringType, IntegerType,
+    DateType, TimestampType, ArrayType
+)
+
+silver_staging_spark_schema = StructType([
+            # session level
+            StructField("issn_id", StringType(), False),
+            StructField("legaslative_period", IntegerType(), False),
+            StructField("session_nr", IntegerType(), False),
+            StructField("session_date", DateType(), False),
+            StructField("session_start_time", StringType(), True),
+            StructField("session_end_time", StringType(), True),
+            StructField("next_session_date", StringType(), True),
+            # agenda level
+            StructField("agenda_name", StringType(), False),
+            StructField("agenda_title", StringType(), True),
+            StructField("agenda_subtitle", StringType(), True),
+            StructField("agenda_docs", ArrayType(StringType()), True),
+            # speaker level
+            StructField("speaker_id", StringType(), False),
+            StructField("name", StringType(), False),
+            StructField("lastname", StringType(), False),
+            StructField("role", StringType(), True),
+            StructField("party_affiliation", StringType(), True),
+            # speech level
+            StructField("speech_id", StringType(), False),
+            StructField("speech", StringType(), False),
+            StructField("comments", ArrayType(
+                StructType([
+                    StructField("index_position", IntegerType(), True),
+                    StructField("comment_text", StringType(), True),
+                ])
+            ), True),
+            StructField("source_path", StringType(), False)
+])
+
+
+
