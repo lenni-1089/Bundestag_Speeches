@@ -48,7 +48,7 @@ def cleaning_raw_speeches(dataframe: pd.DataFrame) -> pd.DataFrame:
 
     # type casting
     # cast session dates from string to dates
-    df["session_date"] = pd.to_datetime(df["session_date"], format= "%d.%m.%Y")
+    df["session_date"] = pd.to_datetime(df["session_date"], format= "%d.%m.%Y").dt.date
     # ensuring speaker ids are strings not ints
     df["speaker_id"] = df["speaker_id"].astype(str)
     # casting legislative period and session nr to int
