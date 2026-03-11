@@ -1,0 +1,21 @@
+version: 1
+
+models:
+  - name: speakers
+    description: >
+      This table contains the distinct speakers of the Bundestag speeches,
+      along with their roles and party affiliations. It is derived from the
+      staging table 'stg_bundestag__speeches' and includes only a subset
+      of speakers based on their IDs.
+    columns:
+      - name: speaker_id
+        description: "Unique identifier for each speaker."
+        data_type: integer
+      - name: name
+        description: "First name of the speaker."
+      - name: lastname
+        description: "Last name of the speaker."
+      - name: role
+        description: "Role of the speaker in the Bundestag."
+      - name: party_affiliation
+        description: "Political party affiliation of the speaker, if available."
