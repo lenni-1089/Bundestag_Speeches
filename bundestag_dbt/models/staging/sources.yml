@@ -1,7 +1,0 @@
-sources:
-  - name: bundestag
-    database: bundestag_dev  
-    schema: silver_staging  
-    tables:
-      - name: speeches_staging
-

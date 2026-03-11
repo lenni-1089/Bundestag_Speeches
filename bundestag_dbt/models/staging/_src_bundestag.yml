@@ -1,0 +1,13 @@
+sources:
+  - name: bundestag
+    database: bundestag_dev  
+    schema: silver_staging  
+    tables:
+      - name: speeches_staging
+      # add columns
+      # eventually add freshness test if dbt runs are only triggered upon newly ingested data
+      # config:
+      #   loaded_at_field: loaded_at: processed_at
+      #   warn_after: {count: 1, period: hour}
+      #   error_after: {count: 2, period: hour}
+
