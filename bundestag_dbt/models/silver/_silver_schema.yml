@@ -1,7 +1,7 @@
 version: 1
 
 models:
-  - name: speakers
+  - name: dim_speakers
     description: >
       This table contains the distinct speakers of the Bundestag speeches,
       along with their roles and party affiliations. It is derived from the
@@ -11,11 +11,23 @@ models:
       - name: speaker_id
         description: "Unique identifier for each speaker."
         data_type: integer
+        data_tests:
+          - not_null
+          - unique
       - name: name
         description: "First name of the speaker."
+        data_type: string
+        data_tests:
+          - not_null
       - name: lastname
         description: "Last name of the speaker."
+        data_type: string
+        data_tests:
+          - not_null
       - name: role
         description: "Role of the speaker in the Bundestag."
+        data_type: string
       - name: party_affiliation
         description: "Political party affiliation of the speaker, if available."
+        data_type: string
+     
