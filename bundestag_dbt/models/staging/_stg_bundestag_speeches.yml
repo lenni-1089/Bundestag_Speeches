@@ -79,7 +79,7 @@ models:
    - name: role
      description: >
         "Role of a speaker, currently when regular member None, else role like Minister, Chancellor etc."
-      data_type: string
+     data_type: string
 
    
    - name: party_affiliation
