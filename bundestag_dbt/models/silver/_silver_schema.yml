@@ -95,8 +95,7 @@ models:
           - relationships:
               to: ref('sessions')
               field: session_id
-              type: 
-
+              
       - name: agenda_name
         description: "Name of the agenda item type and nr."
         data_type: string
