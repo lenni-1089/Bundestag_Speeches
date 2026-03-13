@@ -30,4 +30,89 @@ models:
       - name: party_affiliation
         description: "Political party affiliation of the speaker, if available."
         data_type: string
+  
+  - name: sessions
+    description: >
+            This table contains the distinct plenary debate sessions per legislative period, along with their dates. 
+            It is derived from the staging table 'stg_bundestag__speeches'.
+    columns:
+        # Primary Key
+      - name: session_id
+        description: "Unique identifier for each session, formatted as 'WP{legislative_period}-{session_nr}'."
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
+      - name: legaslative_period
+        description: "Legislative period of the session."
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: session_nr
+        description: "Session number within the legislative period."
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: session_date
+        description: "Date of the session."
+        data_type: date
+        data_tests:
+          - not_null
+          - unique
+      - name: session_start_time
+        description: "Start time of the session."
+        data_type: time
+      - name: session_end_time
+        description: "End time of the session."
+        data_type: time
+      - name: next_session_date
+        description: "Date of the next session, if available."
+        data_type: date
+  
+  - name: agenda_items
+    description: >
+            This table contains the distinct agenda items of a given plenary session.
+            Each agenda item marks one particular debate within a session.
+            That debate usually has a title, subtitle and sometimes references/relates
+            to particluar documents (e.g. a legaslative proposal, a report, etc.). 
+            It is derived from the staging table 'stg_bundestag__speeches'.
+    columns:
+        # Primary Key
+      - name: agenda_item_id
+        description: >
+            Unique identifier for each agenda item, formatted as 
+            'WP{legislative_period}-{session_nr}-{agenda_item_nr}'.
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
+        # Foreign Key referencing sessions.session_id  
+      - name: session_id
+        description: "ID of the session to which the agenda item belongs."
+        data_type: string
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('sessions')
+              field: session_id
+              type: 
+
+      - name: agenda_name
+        description: "Name of the agenda item type and nr."
+        data_type: string
+        data_tests:
+          - not_null
+      - name: agenda_title
+        description: "Title of the agenda item."
+        data_type: string
+      - name: agenda_subtitle
+        description: "Subtitle of the agenda item, if available."
+        data_type: string
+      - name: agenda_docs
+        description: "References to documents related to the agenda item, if available."
+        data_type: list[string]
+  
+
+
+
      
