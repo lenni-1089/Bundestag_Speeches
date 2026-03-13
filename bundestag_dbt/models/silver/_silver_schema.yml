@@ -1,13 +1,65 @@
 version: 1
 
 models:
-  - name: dim_speakers
+
+  - name: speeches
+    description: >
+      This table contains all distinct speeches that we extracted and validated from the raw
+      plenary protocols. Each speech is part of a given debate (agenda item) within a plenary session, 
+      the debate a speech was part of is identified by the agenda item id, from the agenda items table
+      which in the next layer relates it to plenary sessions which in the next layer belong to one 
+      legislative period. All that information is encoded in the agenda item id. In addition to that
+      a speech is given by a speaker, which is identified as speaker id, an individual speech identifier
+      (WP{legislative period}-{session nr}-{agenda item/debate nr}-{speech position in specific debate}).
+    columns:
+        # Foreign Key
+      - name: agenda_item_id
+        description: "Debate/agenda item identifier WP{legislative period}-{session nr}-{agenda item/debate nr}"
+        data_type: string 
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('agenda_items')
+              field: agenda_item_id
+        # Foreign Key
+      - name: speaker_id
+        description: "Speaker identifier (provided by the Bundestag)"
+        data_type: string
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('speakers')
+              field: speaker_id
+        # Primary Key
+      - name: speech_id
+        description: >
+          Unique speech identifier 
+          WP{legislative period}-{session nr}-{agenda item/debate nr}-{speech position in specific debate}
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
+      - name: speech
+        description: "Speech content"
+        data_type: string
+        data_tests:
+          - not_null
+      - name: comments
+        description: "Comments/interjections of a given speech"
+        data_type: list[string]
+        
+
+
+
+
+  - name: speakers
     description: >
       This table contains the distinct speakers of the Bundestag speeches,
       along with their roles and party affiliations. It is derived from the
       staging table 'stg_bundestag__speeches' and includes only a subset
       of speakers based on their IDs.
     columns:
+        # Primary Key
       - name: speaker_id
         description: "Unique identifier for each speaker."
         data_type: integer
@@ -95,7 +147,7 @@ models:
           - relationships:
               to: ref('sessions')
               field: session_id
-              
+
       - name: agenda_name
         description: "Name of the agenda item type and nr."
         data_type: string
