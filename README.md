@@ -160,7 +160,7 @@ Bundestag_Speeches/
 ├── load/                         # Placeholder — Delta write utilities
 ├── transformation/               # Placeholder — pre-dbt transformations
 └── docs/                         # Documentation assets
-    └── frontend_mockups.png
+    └── bundestag_pipeline_architecture.svg
 ```
 
 ---
@@ -206,7 +206,7 @@ The silver layer uses dbt Core to transform the flat staging table into a normal
 
 **Speaker extraction bug (1 failing test)** — The XML parser currently takes the first `<redner>` (speaker) element found anywhere within a `<rede>` (speech) element. When a speech contains nested interjections that are themselves `<rede>` elements (a quirk of the Bundestag XML schema), the parser can pick up the interjecting speaker's metadata instead of the main speaker's. The fix is identified: restrict the XPath to only the first direct-child `<redner>` within each `<rede>`. This is a bronze-layer extraction fix that will propagate through the pipeline.
 
-**Limited scale** — Currently only 6 sessions are loaded. The pipeline works but has not been tested at full scale. Scaling is a near-term priority.
+**Limited scale** — Currently only 6 sessions are loaded. The pipeline works but has not been tested at full scale (~250 sessions per legislative period). Scaling is a near-term priority.
 
 **No orchestration yet** — The ingestion steps are currently run manually via Databricks notebooks. Automated scheduling (Databricks Workflows as a first step, Apache Airflow as a future option) is planned.
 
@@ -250,13 +250,9 @@ The silver layer uses dbt Core to transform the flat staging table into a normal
 
 ## Frontend Vision
 
-The long-term goal is an interactive web application for exploring Bundestag speeches. Below are early design mockups showing the envisioned user experience — search and filter, speech detail with inline interjections, timeline view, and analytics dashboard.
+The long-term goal is an interactive web application ("BundestagExplorer") for exploring Bundestag speeches — with search and filtering, speech detail views with inline interjections, a session timeline, and an analytics dashboard.
 
-> **Note:** The frontend is not yet implemented. Current project focus is on completing the data engineering pipeline. These mockups represent the target direction.
-
-<p align="center">
-  <img src="docs/frontend_mockups.png" alt="BundestagExplorer frontend mockups" width="100%">
-</p>
+> **Note:** The frontend is not yet implemented. Current project focus is on completing the data engineering pipeline.
 
 ---
 
