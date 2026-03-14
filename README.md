@@ -25,7 +25,7 @@
 The pipeline follows a **medallion architecture** (bronze → silver → gold) running on Databricks with Unity Catalog.
 
 <p align="center">
-  <img src="docs/pipeline_architecture.png" alt="Pipeline architecture" width="100%">
+  <img src="docs/bundestag_pipeline_architecture.svg" alt="Pipeline architecture" width="100%">
 </p>
 
 | Layer | Status |
