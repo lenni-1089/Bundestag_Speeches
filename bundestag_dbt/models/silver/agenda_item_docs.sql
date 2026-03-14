@@ -1,6 +1,7 @@
 -- agenda_item_docs.sql
 -- Explodes the agenda_docs array into one row per document URL per agenda item.
--- Agenda items without documents (empty arrays) are naturally excluded
+-- Uses POSEXPLODE to get array position, which feeds the hierarchical document ID
+-- (e.g. WP20-042-003-DOC01). Agenda items without documents are naturally excluded
 -- since EXPLODE drops rows with empty arrays.
 --
 -- References int_bundestag__speeches rather than agenda_items to maintain
@@ -8,7 +9,14 @@
 -- This keeps models independent, modular, and concurrently executable —
 -- no silver model blocks another during dbt run.
 
-SELECT DISTINCT
+WITH exploded AS (
+    SELECT DISTINCT
     agenda_item_id,
-    EXPLODE(agenda_docs) AS document_url
-FROM {{ ref('int_bundestag__speeches') }}
+    POSEXPLODE(agenda_docs)  AS (position, document_url)
+FROM {{ ref('int_bundestag__speeches') }})
+
+SELECT agenda_item_id,
+       agenda_item_id || '-DOC' || LPAD(position +1 ,2, '0') AS document_id,
+       document_url
+FROM exploded
+
