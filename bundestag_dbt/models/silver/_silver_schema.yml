@@ -49,9 +49,6 @@ models:
         data_type: list[string]
         
 
-
-
-
   - name: speakers
     description: >
       This table contains the distinct speakers of the Bundestag speeches,
@@ -82,6 +79,111 @@ models:
       - name: party_affiliation
         description: "Political party affiliation of the speaker, if available."
         data_type: string
+
+  
+  - name: agenda_items
+    description: >
+            This table contains the distinct agenda items of a given plenary session.
+            Each agenda item marks one particular debate within a session.
+            That debate usually has a title, subtitle and sometimes references/relates
+            to particluar documents (e.g. a legaslative proposal, a report, etc.). 
+            It is derived from the staging table 'stg_bundestag__speeches'.
+    columns:
+        # Primary Key
+      - name: agenda_item_id
+        description: >
+            Unique identifier for each agenda item, formatted as 
+            'WP{legislative_period}-{session_nr}-{agenda_item_nr}'.
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
+        # Foreign Key referencing sessions.session_id  
+      - name: session_id
+        description: "ID of the session to which the agenda item belongs."
+        data_type: string
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('sessions')
+              field: session_id
+      - name: agenda_name
+        description: "Name of the agenda item type and nr."
+        data_type: string
+        data_tests:
+          - not_null
+      - name: agenda_title
+        description: "Title of the agenda item."
+        data_type: string
+      - name: agenda_subtitle
+        description: "Subtitle of the agenda item, if available."
+        data_type: string
+      - name: agenda_docs
+        description: "References to documents related to the agenda item, if available."
+        data_type: list[string]
+
+  - name: agenda_item_docs
+    description: >
+      A particular debate can reference or relate to one or more external documents.
+      Those can be legislative proposals, official reports etc. In the plenary protocols
+      those documents are referenced via an url path, most often pointing to a pdf.
+      Each document receives a hierarchical ID extending the parent agenda item ID
+      with a positional suffix (e.g. WP20-042-003-DOC01), derived from the array
+      position via POSEXPLODE.
+      In future versions those documents are planned to be integrated into the database
+      directly, but as of now are only referenced. 
+    columns:
+      # Foreign Key
+     - name: agenda_item_id
+       data_type: string
+       data_tests:
+         - not_null
+         - relationships:
+            to: ref('agenda_items')
+            field: agenda_item_id
+       # Primary Key
+     - name: document_id 
+       data_type: string
+       data_tests:
+        - not_null
+        - unique
+     - name: document_url
+       data_type: string
+       data_tests:
+        - not_null
+  
+  - name: speech_comments
+    description: >
+      Speeches are often interjected or reacted to by the audience. During extraction those interjections
+      were removed and stored in an array/list of structs/dictionaries, with each interjection
+      holding the index position it occurred in the speech and the interjection's content as comment_text.
+      The index position allows to fully reconstruct speeches if desired. In this table each row
+      holds one interjection of a particular speech. Each comment receives a hierarchical ID extending
+      the parent speech ID with a positional suffix (e.g. WP20-042-003-007-C01), derived from the
+      array position via POSEXPLODE.
+    columns:
+        # Foreign Key
+      - name: speech_id 
+        data_type: string
+        data_tests:
+           - not_null
+           - relationships:
+              to: ref('speeches')
+              field: speech_id
+        # Primary Key
+      - name: comment_id
+        data_type: string
+        data_tests:
+           - not_null
+           - unique
+      - name: index_position
+        data_type: int
+        data_tests:
+            - not_null
+      - name: comment_text
+        data_type: string
+        data_tests:
+           - not_null
   
   - name: sessions
     description: >
@@ -120,48 +222,7 @@ models:
       - name: next_session_date
         description: "Date of the next session, if available."
         data_type: date
-  
-  - name: agenda_items
-    description: >
-            This table contains the distinct agenda items of a given plenary session.
-            Each agenda item marks one particular debate within a session.
-            That debate usually has a title, subtitle and sometimes references/relates
-            to particluar documents (e.g. a legaslative proposal, a report, etc.). 
-            It is derived from the staging table 'stg_bundestag__speeches'.
-    columns:
-        # Primary Key
-      - name: agenda_item_id
-        description: >
-            Unique identifier for each agenda item, formatted as 
-            'WP{legislative_period}-{session_nr}-{agenda_item_nr}'.
-        data_type: string
-        data_tests:
-          - not_null
-          - unique
-        # Foreign Key referencing sessions.session_id  
-      - name: session_id
-        description: "ID of the session to which the agenda item belongs."
-        data_type: string
-        data_tests:
-          - not_null
-          - relationships:
-              to: ref('sessions')
-              field: session_id
 
-      - name: agenda_name
-        description: "Name of the agenda item type and nr."
-        data_type: string
-        data_tests:
-          - not_null
-      - name: agenda_title
-        description: "Title of the agenda item."
-        data_type: string
-      - name: agenda_subtitle
-        description: "Subtitle of the agenda item, if available."
-        data_type: string
-      - name: agenda_docs
-        description: "References to documents related to the agenda item, if available."
-        data_type: list[string]
   
 
 
