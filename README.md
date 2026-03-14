@@ -24,63 +24,9 @@
 
 The pipeline follows a **medallion architecture** (bronze → silver → gold) running on Databricks with Unity Catalog.
 
-```mermaid
-flowchart LR
-    subgraph SOURCE["Source"]
-        XML["Bundestag XML API\n(Plenary Protocols)"]
-    end
-
-    subgraph BRONZE["Bronze — Raw Ingestion"]
-        direction TB
-        FETCH["fetch_xml.py\n<i>Download & validate XML</i>"]
-        REG["register_session_ingestion.py\n<i>Idempotent session registry</i>"]
-        EXTRACT["session_extraction.py\n<i>Parse XML → DataFrame</i>"]
-        CLEAN["cleaning.py + schemas_bronze.py\n<i>Clean text, cast types, validate</i>"]
-        RAW_SESSIONS[("raw_sessions\n<i>Delta table · registry</i>")]
-        STAGING[("speeches_staging\n<i>Delta table · 22 cols</i>\n<i>ARRAY&lt;STRUCT&gt; for comments</i>")]
-    end
-
-    subgraph SILVER["Silver — dbt Transformation"]
-        direction TB
-        STG["stg_bundestag__speeches\n<i>view · source interface</i>"]
-        INT["int_bundestag__speeches\n<i>view · key construction</i>\n<i>hierarchical string IDs</i>"]
-        SIL_SESSIONS["sessions"]
-        SIL_AGENDA["agenda_items"]
-        SIL_DOCS["agenda_item_docs"]
-        SIL_SPEAKERS["speakers"]
-        SIL_SPEECHES["speeches"]
-        SIL_COMMENTS["speech_comments"]
-    end
-
-    subgraph GOLD["Gold — Serving"]
-        direction TB
-        AGG["Aggregated views\n<i>planned</i>"]
-        API["Flask REST API\n<i>planned</i>"]
-    end
-
-    subgraph FRONTEND["Frontend"]
-        WEB["BundestagExplorer\n<i>planned</i>"]
-    end
-
-    XML --> FETCH --> REG --> RAW_SESSIONS
-    FETCH --> EXTRACT --> CLEAN --> STAGING
-
-    STAGING --> STG --> INT
-    INT --> SIL_SESSIONS
-    INT --> SIL_AGENDA
-    INT --> SIL_DOCS
-    INT --> SIL_SPEAKERS
-    INT --> SIL_SPEECHES
-    INT --> SIL_COMMENTS
-
-    SIL_SPEECHES --> AGG --> API --> WEB
-
-    style SOURCE fill:#f0f0f0,stroke:#999,color:#333
-    style BRONZE fill:#CD7F32,stroke:#8B5A2B,color:#fff
-    style SILVER fill:#C0C0C0,stroke:#808080,color:#333
-    style GOLD fill:#FFD700,stroke:#DAA520,color:#333
-    style FRONTEND fill:#E8F4FD,stroke:#5BA4CF,color:#333
-```
+<p align="center">
+  <img src="docs/pipeline_architecture.png" alt="Pipeline architecture" width="100%">
+</p>
 
 | Layer | Status |
 |-------|--------|
