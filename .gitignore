@@ -11,3 +11,5 @@ ingestion/cleaning_test.py
 .venv
 logs/
 CLAUDE.md
+
+.databricks
