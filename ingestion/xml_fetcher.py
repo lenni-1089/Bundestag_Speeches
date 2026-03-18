@@ -38,13 +38,12 @@ def fetch_xml(input_url: str, output_directory:str) ->str:
     if not os.path.isdir(DIR_PATH):
         os.makedirs(DIR_PATH)
 
-    
     if not os.path.exists(FILE_PATH):
         with open(FILE_PATH, 'wb') as file:
             file.write(response.content)
         return FILE_PATH
     else:
-        raise ValueError(f"File already exists: {FILE_PATH}")
+        raise FileExistsError(f"File already exists: {FILE_PATH}")
 
 
 if __name__ == "__main__":
